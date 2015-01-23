@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Just Note</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="context_hint_text">Текст нотатки</string>
+    <string name="title_hint_text">Заголовок</string>
+    <string name="title_notes">Нотатки</string>
+    <string name="title_add_note">Додати нотатку</string>
+    <string name="untitled_text">Без заголовку</string>
+    <string name="action_refresh">Оновити</string>
+    <string name="undo_text">Нотатку видалено</string>
+    <string name="empty_notes_list">Додані нотатки з\'являються тут</string>
+</resources>

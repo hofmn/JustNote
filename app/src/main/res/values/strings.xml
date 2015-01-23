@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Just Note</string>
+    <string name="action_settings">Settings</string>
+    <string name="context_hint_text">Content</string>
+    <string name="title_hint_text">Title</string>
+    <string name="title_notes">Notes</string>
+    <string name="title_add_note">Add a note</string>
+    <string name="untitled_text">Untitled</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="undo_text">Note deleted</string>
+    <string name="empty_notes_list">Notes you add appear here</string>
+    <string name="action_fake">Insert fake notes</string>
+    <string name="action_delete_all">Delete all notes</string>
+
+</resources>

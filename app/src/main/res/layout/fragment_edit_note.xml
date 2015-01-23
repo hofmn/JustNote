@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.paulzin.justnote.fragments.EditNoteFragment"
+    android:background="@color/bright_foreground_material_dark">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/titleEditText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:hint="@string/title_hint_text"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:textSize="16sp"
+        android:lineSpacingExtra="6sp"
+        android:background="@null"
+        android:textStyle="bold"
+        android:inputType="textCapSentences|textMultiLine|textNoSuggestions"
+        android:textColor="@color/primary_text" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_above="@+id/contentEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/contentEditText"
+        android:layout_below="@+id/titleEditText"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="@string/context_hint_text"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textSize="16sp"
+        android:background="@null"
+        android:gravity="top"
+        android:lineSpacingExtra="6sp"
+        android:inputType="textCapSentences|textMultiLine|textNoSuggestions"
+        android:textColor="@color/primary_text" />
+</RelativeLayout>
