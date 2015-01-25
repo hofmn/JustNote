@@ -13,5 +13,11 @@
     <string name="empty_notes_list">Notes you add appear here</string>
     <string name="action_fake">Insert fake notes</string>
     <string name="action_delete_all">Delete all notes</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="edit_text_email">E-mail</string>
+    <string name="edit_text_password">Password</string>
+    <string name="login_text">Log In</string>
+    <string name="logoImageViewText">logo</string>
+    <string name="action_log_out">Log out</string>
 
 </resources>

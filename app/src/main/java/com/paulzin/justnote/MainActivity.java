@@ -1,5 +1,6 @@
 package com.paulzin.justnote;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.parse.ParseUser;
 import com.paulzin.justnote.data.Note;
 import com.paulzin.justnote.data.OnNoteStateChangeListener;
 import com.paulzin.justnote.fragments.EditNoteFragment;
@@ -28,6 +30,12 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        registerFakeUser("ooswac@gmail.com", "1111", "ooswac@gmail.com");
+        registerFakeUser("page@gmail.com", "1111", "page@gmail.com");
+        registerFakeUser("ass@gmail.com", "1111", "ass@gmail.com");
+
+        checkIfUserIsLoggedIn();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -46,7 +54,6 @@ public class MainActivity extends ActionBarActivity implements
                     .commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,10 +79,14 @@ public class MainActivity extends ActionBarActivity implements
             case R.id.action_delete_all:
                 notesFragment.deleteAllNotes();
                 return true;
+            case R.id.action_log_out:
+                logOut();
             default:
                 return false;
         }
     }
+
+
 
     @Override
     public void onNoteDetailsOpen(Note note) {
@@ -132,5 +143,31 @@ public class MainActivity extends ActionBarActivity implements
         if (undoBar != null) {
             undoBar.setVisibility(View.GONE);
         }
+    }
+
+    private void checkIfUserIsLoggedIn() {
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser == null) {
+            openLogInActivity();
+        }
+    }
+
+    private void openLogInActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void registerFakeUser(String email, String password, String username) {
+        ParseUser testUser = new ParseUser();
+        testUser.setEmail(email);
+        testUser.setPassword(password);
+        testUser.setUsername(email);
+        testUser.signUpInBackground();
+    }
+
+    private void logOut() {
+        ParseUser.logOut();
+        openLogInActivity();
     }
 }

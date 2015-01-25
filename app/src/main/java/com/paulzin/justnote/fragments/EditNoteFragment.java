@@ -14,6 +14,7 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.paulzin.justnote.R;
 import com.paulzin.justnote.data.Note;
 import com.paulzin.justnote.data.OnNoteStateChangeListener;
@@ -111,6 +112,7 @@ public class EditNoteFragment extends Fragment {
                 titleToSave += titleToSave.isEmpty() ? "Untitled" : "";
                 post.put("title", titleToSave);
                 post.put("content", contentToSave);
+                post.put("author", ParseUser.getCurrentUser());
                 post.saveInBackground();
                 callback.onNoteAdded(titleToSave, contentToSave);
             } else {

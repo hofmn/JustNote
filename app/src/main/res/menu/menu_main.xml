@@ -6,6 +6,8 @@
     <item android:id="@+id/action_insert_fake" android:title="@string/action_fake"
         app:showAsAction="never"/>
     <item android:id="@+id/action_delete_all" android:title="@string/action_delete_all"
+    app:showAsAction="never"/>
+    <item android:id="@+id/action_log_out" android:title="@string/action_log_out"
         app:showAsAction="never"/>
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />

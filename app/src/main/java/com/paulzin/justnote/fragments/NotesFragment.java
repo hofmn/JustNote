@@ -23,6 +23,7 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.paulzin.justnote.R;
 import com.paulzin.justnote.data.Note;
 import com.paulzin.justnote.data.OnNoteStateChangeListener;
@@ -174,6 +175,7 @@ public class NotesFragment extends Fragment {
         }
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+        query.whereEqualTo("author", ParseUser.getCurrentUser());
         query.orderByDescending("updatedAt");
 
         query.findInBackground(new FindCallback<ParseObject>() {
