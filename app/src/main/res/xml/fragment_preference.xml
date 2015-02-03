@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/title_account_category"
+        android:key="account">
+
+        <Preference
+            android:title="@string/action_sign_out"
+            android:key="logout"
+            android:summary="ass@gmail.com" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

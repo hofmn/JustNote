@@ -13,10 +13,10 @@
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/container"
+        android:id="@+id/settings_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        tools:context="com.paulzin.justnote.MainActivity"
+        tools:context="com.paulzin.justnote.SettingsActivity"
         tools:ignore="MergeRootFrame" />
 </RelativeLayout>

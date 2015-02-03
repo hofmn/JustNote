@@ -49,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements
         if (fragment == null) {
             fragment = new NotesFragment();
             fm.beginTransaction()
-                   // .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    // .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .add(R.id.container, fragment, NOTES_FRAGMENT_TAG)
                     .commit();
         }
@@ -63,6 +63,15 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SettingsActivity.REQUEST_LOGOUT) {
+            if (resultCode == RESULT_OK) {
+                logOut();
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         NotesFragment notesFragment
@@ -73,20 +82,14 @@ public class MainActivity extends ActionBarActivity implements
             case R.id.action_refresh:
                 notesFragment.refreshNotesList(true);
                 return true;
-            case R.id.action_insert_fake:
-                notesFragment.insertFakeNotesForDebug();
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivityForResult(intent, SettingsActivity.REQUEST_LOGOUT);
                 return true;
-            case R.id.action_delete_all:
-                notesFragment.deleteAllNotes();
-                return true;
-            case R.id.action_log_out:
-                logOut();
             default:
                 return false;
         }
     }
-
-
 
     @Override
     public void onNoteDetailsOpen(Note note) {
@@ -153,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     private void openLogInActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, AuthActivity.class);
         startActivity(intent);
         finish();
     }
