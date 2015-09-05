@@ -42,6 +42,6 @@ public class Note {
 
     @Override
     public String toString() {
-        return title;
+        return title + " - " + content;
     }
 }

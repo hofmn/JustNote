@@ -1,58 +1,60 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bright_foreground_material_dark"
     tools:context=".MainActivity">
 
-    <ListView
-        android:id="@+id/notesList"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/notes_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:divider="@color/divider"
-        android:dividerHeight="1dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        android:scrollbarStyle="outsideOverlay"
-        android:scrollingCache="true"
-        android:clipToPadding="false" />
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <com.melnykov.fab.FloatingActionButton
+    <FrameLayout
+        android:id="@+id/listLoadingProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/primary"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/empty_notes_list"
+            android:visibility="visible"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/addNoteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_add_white_24dp"
-        fab:fab_colorNormal="@color/accent"
-        fab:fab_colorPressed="@color/accent_pressed"
-        fab:fab_colorRipple="@color/accent_pressed"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="24dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_alignParentEnd="true" />
+        android:layout_margin="16dp"
+        app:backgroundTint="@color/accent"
+        android:src="@drawable/ic_add_black_24dp"/>
 
-    <ProgressBar
-        android:id="@+id/listLoadingProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@android:id/empty"
-        android:gravity="center"
-        android:padding="32dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/empty_notes_list"
-        android:textColor="@color/secondary_text"
-        android:textSize="18sp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-</RelativeLayout>
-
+</android.support.design.widget.CoordinatorLayout>

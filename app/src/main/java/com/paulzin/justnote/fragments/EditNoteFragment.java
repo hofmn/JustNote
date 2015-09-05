@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,19 +49,17 @@ public class EditNoteFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         try {
-            callback = (OnNoteStateChangeListener) activity;
+            if (context instanceof Activity) {
+                callback = (OnNoteStateChangeListener) context;
+            }
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " implement interfaces!");
         }
-    }
-
-    public EditNoteFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -97,7 +96,6 @@ public class EditNoteFragment extends Fragment {
         }
 
         getActivity().setTitle(getString(R.string.title_add_note));
-
         return rootView;
     }
 
@@ -106,10 +104,8 @@ public class EditNoteFragment extends Fragment {
         String contentToSave = contentEditText.getText().toString().trim();
 
         if (!contentToSave.isEmpty() || !titleToSave.isEmpty()) {
-
             if (note == null) {
                 ParseObject post = new ParseObject("Post");
-                titleToSave += titleToSave.isEmpty() ? "Untitled" : "";
                 post.put("title", titleToSave);
                 post.put("content", contentToSave);
                 post.put("author", ParseUser.getCurrentUser());
@@ -117,7 +113,7 @@ public class EditNoteFragment extends Fragment {
                 callback.onNoteAdded(titleToSave, contentToSave);
             } else {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
-                final String newTitleToSave = titleToSave.isEmpty() ? "Untitled" : titleToSave;
+                final String newTitleToSave = titleToSave;
                 final String newContentToSave = contentToSave;
                 query.getInBackground(note.getId(), new GetCallback<ParseObject>() {
                     @Override

@@ -3,20 +3,21 @@ package com.paulzin.justnote.fragments;
 import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.paulzin.justnote.MainActivity;
+import com.paulzin.justnote.NotesActivity;
 import com.paulzin.justnote.R;
 
 public class SignInFragment extends Fragment {
@@ -32,7 +33,7 @@ public class SignInFragment extends Fragment {
         final EditText emailEditText = (EditText) rootView.findViewById(R.id.emailEditText);
         final EditText passwordEditText = (EditText) rootView.findViewById(R.id.passwordEditText);
 
-        CardView loginButton = (CardView) rootView.findViewById(R.id.loginButton);
+        final Button loginButton = (Button) rootView.findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,16 +44,29 @@ public class SignInFragment extends Fragment {
                     @Override
                     public void done(ParseUser parseUser, ParseException e) {
                         if (e == null) {
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            Intent intent = new Intent(getActivity(), NotesActivity.class);
                             startActivity(intent);
                             getActivity().finish();
                         } else {
-                            Toast.makeText(getActivity(),
-                                    "Something went wrong...",
-                                    Toast.LENGTH_SHORT).show();
+                            Snackbar.make(loginButton,
+                                    getErrorMessage(e.getCode(), e.getMessage()),
+                                    Snackbar.LENGTH_LONG).show();
                         }
                     }
                 });
+            }
+        });
+
+        final Button signUpButton = (Button) rootView.findViewById(R.id.signUpButton);
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
+                        .replace(R.id.container, new SignUpFragment())
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
@@ -92,5 +106,17 @@ public class SignInFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private String getErrorMessage(int code, String defaultMessage) {
+        switch (code) {
+            case ParseException.OBJECT_NOT_FOUND:
+                return "Incorrect email or password";
+            case ParseException.CONNECTION_FAILED:
+                return "Connect to network and try again";
+            default:
+                return defaultMessage;
+
+        }
     }
 }

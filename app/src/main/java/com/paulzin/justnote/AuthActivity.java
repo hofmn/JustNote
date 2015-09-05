@@ -2,11 +2,12 @@ package com.paulzin.justnote;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.paulzin.justnote.fragments.SignInFragment;
 
 
-public class AuthActivity extends ActionBarActivity {
+public class AuthActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

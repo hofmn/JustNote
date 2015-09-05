@@ -2,22 +2,18 @@ package com.paulzin.justnote.fragments;
 
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
-import com.jensdriller.libs.undobar.UndoBar;
-import com.melnykov.fab.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -27,36 +23,41 @@ import com.parse.ParseUser;
 import com.paulzin.justnote.R;
 import com.paulzin.justnote.data.Note;
 import com.paulzin.justnote.data.OnNoteStateChangeListener;
-import com.paulzin.justnote.ui.SwipeDismissListViewTouchListener;
+import com.paulzin.justnote.ui.ItemListener;
+import com.paulzin.justnote.ui.NotesAdapter;
+import com.paulzin.justnote.ui.SimpleItemTouchHelperCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 
-public class NotesFragment extends Fragment {
-
+public class NotesFragment extends Fragment implements ItemListener {
     private final String LOG_TAG = getClass().getCanonicalName();
 
     private OnNoteStateChangeListener callback;
 
     private ArrayList<Note> notes;
-    private ArrayAdapter<Note> adapter;
+    private View listLoadingProgressBar;
+    private NotesAdapter notesAdapter;
 
-    private ProgressBar listLoadingProgressBar;
-    private ListView notesListView;
+    private RecyclerView notesRecyclerView;
+    private View emptyView;
 
     public NotesFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         try {
-            callback = (OnNoteStateChangeListener) activity;
+            if (context instanceof Activity) {
+                callback = (OnNoteStateChangeListener) context;
+            }
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " implement interfaces!");
         }
     }
@@ -72,104 +73,66 @@ public class NotesFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_notes, container, false);
 
-        listLoadingProgressBar = (ProgressBar) rootView.findViewById(R.id.listLoadingProgressBar);
+        listLoadingProgressBar = rootView.findViewById(R.id.listLoadingProgressBar);
+        emptyView = rootView.findViewById(R.id.emptyView);
+
+        if (notes != null && notes.isEmpty()) {
+            showEmptyView();
+        }
 
         if (notes == null) {
             notes = new ArrayList<>();
             refreshNotesList(true);
         }
 
-        adapter = new ArrayAdapter<>(
-                getActivity(),
-                R.layout.note_list_item,
-                R.id.titleTextView,
-                notes);
+        notesAdapter = new NotesAdapter(getContext(), this, notes);
 
-        View emptyListTextView = rootView.findViewById(android.R.id.empty);
-        emptyListTextView.setAlpha(0);
-        emptyListTextView.animate().alpha(1).setDuration(2000);
+        notesRecyclerView = (RecyclerView) rootView.findViewById(R.id.notes_recycler_view);
+        notesRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL));
+        notesRecyclerView.setAdapter(notesAdapter);
 
-        notesListView = (ListView) rootView.findViewById(R.id.notesList);
-        notesListView.setAdapter(adapter);
-        notesListView.setEmptyView(emptyListTextView);
-        notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ItemTouchHelper.Callback touchCallback = new SimpleItemTouchHelperCallback(notesAdapter, notesRecyclerView);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
+        touchHelper.attachToRecyclerView(notesRecyclerView);
+
+        rootView.findViewById(R.id.addNoteButton).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                callback.onNoteDetailsOpen(adapter.getItem(position));
-            }
-        });
-
-        final FloatingActionButton addNoteButton =
-                (FloatingActionButton) rootView.findViewById(R.id.addNoteButton);
-        addNoteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 callback.onAddButtonClicked();
             }
         });
 
-        SwipeDismissListViewTouchListener touchListener =
-                new SwipeDismissListViewTouchListener(
-                        notesListView,
-                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
-                            @Override
-                            public boolean canDismiss(int position) {
-                                return true;
-                            }
-
-                            @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-
-                                startMoveAnimation(addNoteButton, true);
-
-                                for (final int position : reverseSortedPositions) {
-                                    final Note note = adapter.getItem(position);
-                                    adapter.remove(note);
-                                    new UndoBar.Builder(getActivity())
-                                            .setAlignParentBottom(true)
-                                            .setStyle(UndoBar.Style.LOLLIPOP)
-                                            .setMessage(R.string.undo_text)
-                                            .setUndoColorResId(R.color.primary)
-                                            .setListener(new UndoBar.Listener() {
-                                                @Override
-                                                public void onHide() {
-                                                    startMoveAnimation(addNoteButton, false);
-                                                    deleteNote(note);
-                                                }
-
-                                                @Override
-                                                public void onUndo(Parcelable parcelable) {
-                                                    startMoveAnimation(addNoteButton, false);
-                                                    addNoteToList(note, position);
-                                                }
-                                            }).show();
-                                }
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-
-        notesListView.setOnTouchListener(touchListener);
-        notesListView.setOnScrollListener(touchListener.makeScrollListener());
-
-        getActivity().setTitle(getString(R.string.title_notes));
+        getActivity().setTitle(R.string.title_notes);
 
         return rootView;
     }
 
+    private int getSpanCount() {
+        boolean inLandMode = getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        return inLandMode
+                ? getActivity().getResources().getInteger(R.integer.span_count_landscape)
+                : getActivity().getResources().getInteger(R.integer.span_count_portrait);
+
+    }
+
     private void deleteNote(final Note note) {
+        Log.d(LOG_TAG, "delete note: " + note);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
         query.getInBackground(note.getId(), new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
+                    Log.d(LOG_TAG, "note deleted");
                     parseObject.deleteInBackground();
+                    if (notesAdapter.getItemCount() == 0) {
+                        showEmptyView();
+                    }
                 }
             }
         });
     }
 
     public void refreshNotesList(boolean showLoadingProgress) {
-
         if (showLoadingProgress) {
             listLoadingProgressBar.setVisibility(View.VISIBLE);
         }
@@ -184,94 +147,65 @@ public class NotesFragment extends Fragment {
                 if (e == null) {
                     notes.clear();
                     for (ParseObject noteObject : parseObjects) {
-                        Note note = new Note(noteObject.getObjectId(),
+                        Note note = new Note(
+                                noteObject.getObjectId(),
                                 noteObject.getString("title"),
-                                noteObject.getString("content"));
+                                noteObject.getString("content")
+                        );
                         notes.add(note);
                     }
-
                     listLoadingProgressBar.setVisibility(View.GONE);
-                    adapter.notifyDataSetChanged();
+                    notesAdapter.notifyDataSetChanged();
+
+                    if (notes.isEmpty()) {
+                        showEmptyView();
+                    }
                 } else {
-                    Log.d(LOG_TAG, "Error: " + e.getMessage());
+                    showEmptyView();
+                    Log.e(LOG_TAG, e.getMessage());
                 }
             }
         });
     }
 
+    private void showEmptyView() {
+        emptyView.setVisibility(View.VISIBLE);
+        emptyView.setAlpha(0);
+        emptyView.animate().alpha(1).setDuration(700).start();
+    }
+
     public void addNoteToList(Note note) {
+        emptyView.setVisibility(View.GONE);
         notes.add(0, note);
-        adapter.notifyDataSetChanged();
+        notesAdapter.notifyItemInserted(0);
     }
 
     public void addNoteToList(Note note, int position) {
         notes.add(position, note);
-        adapter.notifyDataSetChanged();
+        notesAdapter.notifyItemInserted(position);
     }
 
     public void updateNote(Note newNote, Note oldNote) {
         for (Note note : notes) {
-            if (oldNote.getTitle().equals(note.getTitle())) {
+            if (oldNote.getId().equals(note.getId())) {
                 note.setTitle(newNote.getTitle());
                 note.setContent(newNote.getContent());
-                adapter.remove(note);
-                adapter.insert(note, 0);
+                notes.remove(note);
+                notes.add(0, note);
+                notesRecyclerView.scrollToPosition(0);
+                notesAdapter.notifyDataSetChanged();
                 break;
             }
         }
     }
 
-    private void startMoveAnimation(View view, boolean moveUp) {
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        // 'logicalDensity' makes the value of 'moveTo' same for all screen sizes/resolutions
-        float logicalDensity = metrics.density;
-
-        float moveTo = moveUp ? -(48 * logicalDensity) : 0;
-
-        view.animate()
-                .translationY(moveTo)
-                .setDuration(200)
-                .setInterpolator(new LinearInterpolator());
+    @Override
+    public void onClick(Note note) {
+        callback.onNoteDetailsOpen(note);
     }
 
-    public void insertFakeNotesForDebug() {
-        ArrayList<String> titles = new ArrayList<>();
-        titles.add("Weird Beer Flavors That Actually Exist");
-        titles.add("Vampires aren't sparkly fabulous anymore?");
-        titles.add("An imaginary life with Microsoft's new HoloLens");
-        titles.add("So @davidduchovny is following me now");
-        titles.add("The Rolling Stones, 1965");
-        titles.add("Microsoft Office 2016 will be released later this year");
-        titles.add("Дети очень быстро растут, мой сын уже старше меня");
-        titles.add("Mythical Beasts! Do you need any weekend advice?");
-        titles.add("So Sonos' new logo pulses like a speaker when you scroll");
-        titles.add("Думаю летом поехать в Боснию или Герцеговину, выбираю");
-        String contentText = "Praesent eleifend aliquet lectus. Aenean nec interdum leo. Pellentesque massa enim, tincidunt nec porttitor vitae, varius et urna. Nunc commodo a mi nec mattis. Cras sit amet pulvinar mi. Vivamus augue ligula, sagittis non magna sit amet, imperdiet mattis leo. Proin molestie ex a volutpat tristique. Proin ornare dolor et volutpat maximus. In cursus aliquet imperdiet. In iaculis, nisl id tristique scelerisque, nisl quam rutrum odio, ac feugiat est neque quis velit. Cras vitae pharetra massa. In quis facilisis turpis.";
-
-        for (String title : titles) {
-            ParseObject post = new ParseObject("Post");
-            post.put("title", title);
-            post.put("content", contentText);
-            post.saveInBackground();
-        }
-
-        refreshNotesList(false);
-    }
-
-    public void deleteAllNotes() {
-        ArrayList<ParseObject> posts = new ArrayList<>();
-
-        for (Note note : notes) {
-            ParseObject post = new ParseObject("Post");
-            post.put("id", note.getId());
-            post.put("title", note.getTitle());
-            post.put("content", note.getContent());
-            posts.add(post);
-        }
-
-        ParseObject.deleteAllInBackground(posts);
+    @Override
+    public void onDismiss(Note note) {
+        deleteNote(note);
     }
 }

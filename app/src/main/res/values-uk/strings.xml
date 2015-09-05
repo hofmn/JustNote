@@ -10,4 +10,6 @@
     <string name="action_refresh">Оновити</string>
     <string name="undo_text">Нотатку видалено</string>
     <string name="empty_notes_list">Додані нотатки з\'являються тут</string>
+    <string name="note_deleted">Note was deleted</string>
+    <string name="undo">Undo</string>
 </resources>

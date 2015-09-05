@@ -5,6 +5,7 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/primary</item>
     </style>
 
     <style name="CustomToolbar" parent="AppTheme">
@@ -18,5 +19,30 @@
         <item name="colorControlNormal">@color/primary</item>
     </style>
 
+    <style name="TextAppearanceExtraLarge" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">72sp</item>
+        <item name="android:paddingBottom">48dp</item>
+    </style>
+
+    <style name="TextAppearanceLarge" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">54sp</item>
+        <item name="android:paddingBottom">32dp</item>
+    </style>
+
+    <style name="TextAppearanceMedium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:paddingBottom">24dp</item>
+    </style>
+
+    <style name="TextAppearanceSmall" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="YellowButton">
+        <item name="colorButtonNormal">@color/accent</item>
+    </style>
 
 </resources>

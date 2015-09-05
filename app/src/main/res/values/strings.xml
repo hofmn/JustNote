@@ -21,5 +21,8 @@
     <string name="have_account_text">Already have account?</string>
     <string name="dont_have_account_text">Don\'t have account?</string>
     <string name="sign_up_text">Sign Up</string>
+    <string name="note_deleted">Note was deleted</string>
+    <string name="undo">Undo</string>
+    <string name="create_account">Create account</string>
 
 </resources>
