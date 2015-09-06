@@ -53,22 +53,22 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                 case 1:
                 case 2:
                 case 3:
-                    holder.contentTextView.setTextAppearance(R.style.TextAppearanceExtraLarge);
+                    holder.contentTextView.setTextAppearance(holder.contentTextView.getContext(), R.style.TextAppearanceExtraLarge);
                     break;
                 case 4:
                 case 5:
                 case 6:
-                    holder.contentTextView.setTextAppearance(R.style.TextAppearanceLarge);
+                    holder.contentTextView.setTextAppearance(holder.contentTextView.getContext(), R.style.TextAppearanceLarge);
                     break;
                 case 7:
                 case 8:
                 case 9:
-                    holder.contentTextView.setTextAppearance(R.style.TextAppearanceMedium);
+                    holder.contentTextView.setTextAppearance(holder.contentTextView.getContext(), R.style.TextAppearanceMedium);
                     break;
                 case 10:
                 case 11:
                 case 12:
-                    holder.contentTextView.setTextAppearance(R.style.TextAppearanceSmall);
+                    holder.contentTextView.setTextAppearance(holder.contentTextView.getContext(), R.style.TextAppearanceSmall);
             }
         }
     }
